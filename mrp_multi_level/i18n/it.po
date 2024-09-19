@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-05-24 19:10+0000\n"
-"Last-Translator: Francesco Foresti <francesco.foresti@ooops404.com>\n"
+"PO-Revision-Date: 2024-02-29 17:33+0000\n"
+"Last-Translator: mymage <stefano.consolaro@mymage.it>\n"
 "Language-Team: none\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -57,7 +57,7 @@ msgstr "Approvato"
 #: model_terms:ir.ui.view,arch_db:mrp_multi_level.product_mrp_area_form
 #: model_terms:ir.ui.view,arch_db:mrp_multi_level.product_mrp_area_search
 msgid "Archived"
-msgstr "Archiviato"
+msgstr "In archivio"
 
 #. module: mrp_multi_level
 #: model:ir.model.fields.selection,name:mrp_multi_level.selection__mrp_move__state__assigned
@@ -137,10 +137,11 @@ msgstr "Datta attuale"
 #. module: mrp_multi_level
 #: model:ir.model.fields,field_description:mrp_multi_level.field_mrp_move__current_qty
 msgid "Current Qty"
-msgstr "Qta. attuale"
+msgstr "Q.tà attuale"
 
 #. module: mrp_multi_level
 #: model:ir.model.fields,field_description:mrp_multi_level.field_mrp_inventory__date
+#: model_terms:ir.ui.view,arch_db:mrp_multi_level.mrp_inventory_search
 msgid "Date"
 msgstr "Data"
 
@@ -197,7 +198,7 @@ msgstr "Bozza"
 #: model:ir.model.fields,field_description:mrp_multi_level.field_mrp_planned_order__due_date
 #: model_terms:ir.ui.view,arch_db:mrp_multi_level.mrp_planned_order_view_search
 msgid "Due Date"
-msgstr "Data richiesta"
+msgstr "Scadenza"
 
 #. module: mrp_multi_level
 #: model:ir.model.fields,field_description:mrp_multi_level.field_product_mrp_area__mrp_exclude
@@ -233,7 +234,7 @@ msgstr "FP-4"
 #: model:ir.model.fields,field_description:mrp_multi_level.field_mrp_planned_order__fixed
 #: model_terms:ir.ui.view,arch_db:mrp_multi_level.mrp_planned_order_view_search
 msgid "Fixed"
-msgstr "Fissato"
+msgstr "Fisso"
 
 #. module: mrp_multi_level
 #: model:ir.model.fields.selection,name:mrp_multi_level.selection__mrp_move__mrp_origin__fc
@@ -386,7 +387,6 @@ msgstr "MRP applicabile"
 #: model:ir.model.fields,field_description:mrp_multi_level.field_mrp_inventory__mrp_area_id
 #: model:ir.model.fields,field_description:mrp_multi_level.field_mrp_move__mrp_area_id
 #: model:ir.model.fields,field_description:mrp_multi_level.field_mrp_planned_order__mrp_area_id
-#: model:ir.model.fields,field_description:mrp_multi_level.field_stock_location__mrp_area_id
 #: model_terms:ir.ui.view,arch_db:mrp_multi_level.mrp_area_form
 #: model_terms:ir.ui.view,arch_db:mrp_multi_level.mrp_inventory_search
 msgid "MRP Area"
@@ -395,6 +395,7 @@ msgstr "Area MRP"
 #. module: mrp_multi_level
 #: model:ir.model.fields,field_description:mrp_multi_level.field_product_product__mrp_area_count
 #: model:ir.model.fields,field_description:mrp_multi_level.field_product_template__mrp_area_count
+#: model:ir.model.fields,field_description:mrp_multi_level.field_stock_location__mrp_area_count
 msgid "MRP Area Parameter Count"
 msgstr "Contegio parametri area MRP"
 
@@ -407,6 +408,7 @@ msgstr "Parametri area MRP"
 #. module: mrp_multi_level
 #: model:ir.ui.menu,name:mrp_multi_level.menu_mrp_areas
 #: model_terms:ir.ui.view,arch_db:mrp_multi_level.product_template_only_form_view_mrp
+#: model_terms:ir.ui.view,arch_db:mrp_multi_level.view_location_form
 #: model_terms:ir.ui.view,arch_db:mrp_multi_level.view_mrp_product_product_form
 msgid "MRP Areas"
 msgstr "Aree MRP"
@@ -455,7 +457,7 @@ msgstr "Movimenti MRP"
 #. module: mrp_multi_level
 #: model:ir.model.fields,field_description:mrp_multi_level.field_mrp_move__mrp_qty
 msgid "MRP Quantity"
-msgstr "Qantità MRP"
+msgstr "Quantità MRP"
 
 #. module: mrp_multi_level
 #: model:ir.model,name:mrp_multi_level.model_mrp_inventory
@@ -783,7 +785,7 @@ msgstr "Invia a"
 #. module: mrp_multi_level
 #: model:ir.model.fields,field_description:mrp_multi_level.field_product_mrp_area__mrp_qty_multiple
 msgid "Qty Multiple"
-msgstr "Qta. multiple"
+msgstr "Multiplo q.tà"
 
 #. module: mrp_multi_level
 #: model:ir.model.fields,field_description:mrp_multi_level.field_mrp_planned_order__qty_released
@@ -822,15 +824,6 @@ msgstr "Pronto"
 #: model:ir.model.fields,field_description:mrp_multi_level.field_mrp_planned_order__order_release_date
 msgid "Release Date"
 msgstr "Data rilascio"
-
-#. module: mrp_multi_level
-#: model:ir.model.fields,help:mrp_multi_level.field_stock_location__mrp_area_id
-msgid ""
-"Requirements for a particular MRP area are combined for the purposes of "
-"procurement by the MRP."
-msgstr ""
-"Richieste di una area MRP particolare sono combinate allo scopo di "
-"approvvigionamento dall'MRP."
 
 #. module: mrp_multi_level
 #: model:ir.actions.act_window,name:mrp_multi_level.action_mrp_multi_level
@@ -895,7 +888,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:mrp_multi_level.field_mrp_move__origin
 #: model:ir.model.fields,field_description:mrp_multi_level.field_mrp_planned_order__origin
 msgid "Source Document"
-msgstr "Documento origine"
+msgstr "Documento di origine"
 
 #. module: mrp_multi_level
 #: model:ir.model.fields,field_description:mrp_multi_level.field_mrp_inventory__initial_on_hand_qty
@@ -920,7 +913,7 @@ msgstr "Regola di giacenza"
 #. module: mrp_multi_level
 #: model:ir.model.fields,field_description:mrp_multi_level.field_product_mrp_area__main_supplierinfo_id
 msgid "Supplier Info"
-msgstr "Informazione fornitore"
+msgstr "Informazioni fornitore"
 
 #. module: mrp_multi_level
 #: model:ir.model.fields,field_description:mrp_multi_level.field_mrp_inventory__supply_qty
@@ -1018,7 +1011,7 @@ msgstr "Verificato per l'MRP"
 #. module: mrp_multi_level
 #: model:ir.model.fields.selection,name:mrp_multi_level.selection__mrp_move__state__waiting
 msgid "Waiting"
-msgstr "Attesa"
+msgstr "In attesa"
 
 #. module: mrp_multi_level
 #: model:ir.model.fields,field_description:mrp_multi_level.field_mrp_area__warehouse_id
@@ -1034,7 +1027,7 @@ msgstr "Procedura guidata"
 #. module: mrp_multi_level
 #: model:ir.model.fields,field_description:mrp_multi_level.field_mrp_area__calendar_id
 msgid "Working Hours"
-msgstr "Ore lavorative"
+msgstr "Orario lavorativo"
 
 #. module: mrp_multi_level
 #. odoo-python
@@ -1042,3 +1035,10 @@ msgstr "Ore lavorative"
 #, python-format
 msgid "You cannot use a negative number."
 msgstr "non si può usare un numero negativo."
+
+#~ msgid ""
+#~ "Requirements for a particular MRP area are combined for the purposes of "
+#~ "procurement by the MRP."
+#~ msgstr ""
+#~ "Richieste di una area MRP particolare sono combinate allo scopo di "
+#~ "approvvigionamento dall'MRP."

@@ -3,7 +3,6 @@
 # - Jordi Ballester Alomar <jordi.ballester@forgeflow.com>
 # - Lois Rilo Antelo <lois.rilo@forgeflow.com>
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
-
 from math import ceil
 
 from odoo import _, api, fields, models
@@ -176,34 +175,41 @@ class ProductMRPArea(models.Model):
     def _compute_qty_available(self):
         for rec in self:
             rec.qty_available = rec.product_id.with_context(
-                location=rec.mrp_area_id.location_id.id
+                location=rec._get_locations().ids
             ).qty_available
 
-    def _compute_supply_method(self):
+    def _get_rule(self):
+        self.ensure_one()
         group_obj = self.env["procurement.group"]
+        proc_loc = self.location_proc_id or self.location_id
+        values = {
+            "warehouse_id": self.mrp_area_id.warehouse_id,
+            "company_id": self.company_id,
+        }
+        rule = group_obj._get_rule(self.product_id, proc_loc, values)
+        if not rule:
+            return False
+        # Keep getting the rule for the product and the source location until the
+        # action is "buy" or "manufacture". Or until the action is "Pull From" or
+        # "Pull & Push" and the supply method is "Take from Stock".
+        while rule.action not in ("buy", "manufacture") and rule.procure_method in (
+            "make_to_order",
+            "mts_else_mto",
+        ):
+            new_rule = group_obj._get_rule(
+                self.product_id, rule.location_src_id, values
+            )
+            if not new_rule:
+                break
+            rule = new_rule
+        return rule
+
+    def _compute_supply_method(self):
         for rec in self:
-            proc_loc = rec.location_proc_id or rec.mrp_area_id.location_id
-            values = {
-                "warehouse_id": rec.mrp_area_id.warehouse_id,
-                "company_id": rec.mrp_area_id.company_id,
-            }
-            rule = group_obj._get_rule(rec.product_id, proc_loc, values)
+            rule = rec._get_rule()
             if not rule:
                 rec.supply_method = "none"
                 continue
-            # Keep getting the rule for the product and the source location until the
-            # action is "buy" or "manufacture". Or until the action is "Pull From" or
-            # "Pull & Push" and the supply method is "Take from Stock".
-            while rule.action not in ("buy", "manufacture") and rule.procure_method in (
-                "make_to_order",
-                "mts_else_mto",
-            ):
-                new_rule = group_obj._get_rule(
-                    rec.product_id, rule.location_src_id, values
-                )
-                if not new_rule:
-                    break
-                rule = new_rule
             # Determine the supply method based on the final rule.
             boms = rec.product_id.product_tmpl_id.bom_ids.filtered(
                 lambda x: x.type in ["normal", "phantom"]
@@ -223,7 +229,7 @@ class ProductMRPArea(models.Model):
             suppliers = rec.product_id.seller_ids.filtered(
                 lambda r: (not r.product_id or r.product_id == rec.product_id)
                 and (not r.company_id or r.company_id == rec.company_id)
-            )
+            ).sorted(lambda s: (s.sequence, -s.min_qty, s.price, s.id))
             if not suppliers:
                 rec.main_supplierinfo_id = False
                 rec.main_supplier_id = False
@@ -259,24 +265,26 @@ class ProductMRPArea(models.Model):
 
     def _in_stock_moves_domain(self):
         self.ensure_one()
-        locations = self.mrp_area_id._get_locations()
+        locations = self._get_locations()
         return [
             ("product_id", "=", self.product_id.id),
             ("state", "not in", ["done", "cancel"]),
             ("product_qty", ">", 0.00),
-            ("location_id", "not in", locations.ids),
-            ("location_dest_id", "in", locations.ids),
+            "!",
+            ("location_id", "child_of", locations.ids),
+            ("location_dest_id", "child_of", locations.ids),
         ]
 
     def _out_stock_moves_domain(self):
         self.ensure_one()
-        locations = self.mrp_area_id._get_locations()
+        locations = self._get_locations()
         return [
             ("product_id", "=", self.product_id.id),
             ("state", "not in", ["done", "cancel"]),
             ("product_qty", ">", 0.00),
-            ("location_id", "in", locations.ids),
-            ("location_dest_id", "not in", locations.ids),
+            ("location_id", "child_of", locations.ids),
+            "!",
+            ("location_dest_id", "child_of", locations.ids),
         ]
 
     def action_view_stock_moves(self, domain):
@@ -295,3 +303,11 @@ class ProductMRPArea(models.Model):
     def _to_be_exploded(self):
         self.ensure_one()
         return self.supply_method in ["manufacture", "phantom"]
+
+    def _get_locations(self):
+        self.ensure_one()
+        return self.mrp_area_id._get_locations()
+
+    def _should_create_planned_order(self):
+        self.ensure_one()
+        return not self.supply_method == "phantom"
